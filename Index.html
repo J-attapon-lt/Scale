@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ระบบสร้างใบชั่งน้ำหนัก</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: "Sarabun", Arial, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background: #eef2f7;
+      color: #111827;
+    }
+
+    .app-header {
+      background: #1e3a8a;
+      color: #fff;
+      padding: 16px 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .app-header h1 {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 800;
+    }
+
+    .app-header p {
+      margin: 3px 0 0;
+      color: #dbeafe;
+      font-size: 14px;
+    }
+
+    .container {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 18px;
+      display: grid;
+      grid-template-columns: 430px 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .panel {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+    }
+
+    .panel h2 {
+      margin: 0 0 14px;
+      color: #1e3a8a;
+      font-size: 20px;
+      font-weight: 800;
+      border-bottom: 2px solid #dbeafe;
+      padding-bottom: 8px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 11px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      font-size: 13px;
+      font-weight: 700;
+      color: #374151;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      border: 1px solid #cbd5e1;
+      border-radius: 9px;
+      padding: 9px 10px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    textarea {
+      min-height: 64px;
+      resize: vertical;
+    }
+
+    input:focus,
+    textarea:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14);
+    }
+
+    .section-title {
+      grid-column: 1 / -1;
+      margin-top: 8px;
+      color: #f97316;
+      font-weight: 800;
+      border-left: 4px solid #f97316;
+      padding-left: 10px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-weight: 800;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .btn-blue {
+      background: #2563eb;
+      color: #fff;
+    }
+
+    .btn-green {
+      background: #16a34a;
+      color: #fff;
+    }
+
+    .btn-gray {
+      background: #e5e7eb;
+      color: #111827;
+    }
+
+    .preview-wrap {
+      overflow: auto;
+      background: #f8fafc;
+      border-radius: 14px;
+      border: 1px solid #e5e7eb;
+      padding: 18px;
+    }
+
+    /* ==========================
+       ใบชั่ง ตามไฟล์ต้นฉบับ
+    =========================== */
+
+    .weight-slip {
+      width: 210mm;
+      min-height: 148mm;
+      background: #fff;
+      color: #000;
+      margin: 0 auto;
+      padding: 10mm 12mm 8mm;
+      border: 1px solid #d1d5db;
+      position: relative;
+      font-size: 13.5px;
+      line-height: 1.35;
+    }
+
+    .slip-top {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: start;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .slip-no {
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .slip-title {
+      text-align: center;
+      font-weight: 800;
+      font-size: 18px;
+      white-space: nowrap;
+    }
+
+    .slip-date {
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .info-row {
+      display: grid;
+      grid-template-columns: 85px 1fr 90px 1fr;
+      gap: 6px;
+      margin: 3px 0;
+      align-items: center;
+    }
+
+    .info-row.three {
+      grid-template-columns: 85px 1fr 90px 130px;
+    }
+
+    .label {
+      font-weight: 700;
+    }
+
+    .value {
+      border-bottom: 1px dotted #777;
+      min-height: 20px;
+      padding: 0 4px;
+    }
+
+    .blank {
+      min-height: 20px;
+    }
+
+    .main-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+      font-size: 13px;
+    }
+
+    .main-table th,
+    .main-table td {
+      border: 1px solid #000;
+      padding: 5px 6px;
+      vertical-align: middle;
+    }
+
+    .main-table th {
+      font-weight: 800;
+      text-align: center;
+      background: #f3f4f6;
+    }
+
+    .center {
+      text-align: center;
+    }
+
+    .right {
+      text-align: right;
+    }
+
+    .summary-area {
+      display: grid;
+      grid-template-columns: 1fr 72mm;
+      gap: 10px;
+      margin-top: 8px;
+      align-items: start;
+    }
+
+    .note-box {
+      border: 1px solid #000;
+      min-height: 38mm;
+      padding: 7px;
+    }
+
+    .summary-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .summary-table td {
+      border: 1px solid #000;
+      padding: 5px 7px;
+    }
+
+    .summary-table td:first-child {
+      font-weight: 700;
+    }
+
+    .summary-table td:last-child {
+      text-align: right;
+      width: 34mm;
+    }
+
+    .signature-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16mm;
+      margin-top: 18mm;
+      text-align: center;
+      font-size: 13px;
+    }
+
+    .signature-line {
+      border-top: 1px solid #000;
+      padding-top: 5px;
+    }
+
+    .company-footer {
+      position: absolute;
+      left: 12mm;
+      right: 12mm;
+      bottom: 6mm;
+      text-align: center;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    @media (max-width: 1100px) {
+      .container {
+        grid-template-columns: 1fr;
+      }
+
+      .weight-slip {
+        min-width: 210mm;
+      }
+    }
+
+    @media print {
+      @page {
+        size: A4 landscape;
+        margin: 8mm;
+      }
+
+      body {
+        background: #fff !important;
+      }
+
+      .no-print,
+      .app-header,
+      .panel.form-panel h2,
+      .form-panel,
+      .preview-title {
+        display: none !important;
+      }
+
+      .container {
+        display: block !important;
+        max-width: none !important;
+        padding: 0 !important;
+      }
+
+      .panel {
+        box-shadow: none !important;
+        border: 0 !important;
+        padding: 0 !important;
+      }
+
+      .preview-wrap {
+        padding: 0 !important;
+        border: 0 !important;
+        background: #fff !important;
+        overflow: visible !important;
+      }
+
+      .weight-slip {
+        width: 210mm !important;
+        min-height: 148mm !important;
+        border: 0 !important;
+        margin: 0 auto !important;
+        padding: 8mm 10mm 7mm !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="app-header no-print">
+    <div>
+      <h1>ระบบสร้างใบชั่งน้ำหนัก</h1>
+      <p>แบบฟอร์มใบชั่งตามไฟล์ต้นฉบับ</p>
+    </div>
+    <button class="btn-green" onclick="window.print()">พิมพ์ใบชั่ง</button>
+  </header>
+
+  <main class="container">
+    <section class="panel form-panel no-print">
+      <h2>กรอกข้อมูลใบชั่ง</h2>
+
+      <div class="form-grid">
+        <div class="section-title">ข้อมูลหลัก</div>
+
+        <div class="field">
+          <label>เลขที่ใบชั่ง</label>
+          <input id="ticketNo" value="LTR250517-11" oninput="renderSlip()" />
+        </div>
+
+        <div class="field">
+          <label>วันที่ออกเอกสาร</label>
+          <input id="docDate" value="17/05/2568 14:39:30" oninput="renderSlip()" />
+        </div>
+
+        <div class="field full">
+          <label>ชื่อลูกค้า</label>
+          <input id="customerName" value="สหกรณ์กองทุนสวนยางพาราทองผาภูมิ จำกัด" oninput="renderSlip()" />
+        </div>
+
+        <div class="field">
+          <label>พนักงานชั่ง</label>
+          <input id="scaleStaff" value="อรรถพล เจ๊ะโซ๊ะ" oninput="renderSlip()" />
+        </div>
+
+        <div class="field">
+          <label>สินค้า</label>
+          <input id="productName" value="ยางแผ่นดิบ" oninput="renderSlip()" />
+        </div>
+
+        <div class="field">
+          <label>ประเภทรถ</label>
+          <input id="truckType" value="เทรนเลอร์" oninput="renderSlip()" />
+        </div>
+
+        <div class="field">
+          <label>ราคา</label>
+          <input id="price" type="number" value="0" step="0.01" oninput="renderSlip()" />
+        </div>
+
+        <div class="field full">
+          <label>หมายเหตุ</label>
+          <textarea id="note" oninput="renderSlip()"></textarea>
+        </div>
+
+        <div class="section-title">ข้อมูลชั่งเข้า</div>
+
+        <div class="field">
+          <label>ทะเบียนรถเข้า</label>
+          <input id="inPlate" value="70-4923/70-4924 นครศรีธรรมราช" oninput="renderSlip()" />
+        </div>
+
+        <div class="field">
+          <label>วันที่เข้า</label>
+          <input id="inDate" value="17/05/2568" oninput="renderSlip()" />
+        </div>
+
+        <div class="field">
+          <label>เวลาเข้า</label>
+          <input id="inTime" value="08:09:37" oninput="renderSlip()" />
+        </div>
+
+        <div class="field">
+          <label>น้ำหนักเข้า</label>
+          <input id="inWeight" type="number" value="15730" oninput="calculateAndRender()" />
+        </div>
+
+        <div class="section-title">ข้อมูลชั่งออก</div>
+
+        <div class="field">
+          <label>ทะเบียนรถออก</label>
+          <input id="outPlate" value="70-4923/70-4924 นครศรีธรรมราช" oninput="renderSlip()" />
+        </div>
+
+        <div class="field">
+          <label>วันที่ออก</label>
+          <input id="outDate" value="17/05/2568" oninput="renderSlip()" />
+        </div>
+
+        <div class="field">
+          <label>เวลาออก</label>
+          <input id="outTime" value="14:39:30" oninput="renderSlip()" />
+        </div>
+
+        <div class="field">
+          <label>น้ำหนักออก</label>
+          <input id="outWeight" type="number" value="48690" oninput="calculateAndRender()" />
+        </div>
+
+        <div class="section-title">สรุปน้ำหนัก / เงิน</div>
+
+        <div class="field">
+          <label>นน. สุทธิ</label>
+          <input id="netWeight" readonly />
+        </div>
+
+        <div class="field">
+          <label>ความชื้น / สิ่งเจือปน</label>
+          <input id="deductWeight" type="number" value="0" oninput="calculateAndRender()" />
+        </div>
+
+        <div class="field">
+          <label>นน. คงเหลือ</label>
+          <input id="finalWeight" readonly />
+        </div>
+
+        <div class="field">
+          <label>จำนวนเงิน</label>
+          <input id="totalAmount" readonly />
+        </div>
+
+        <div class="field">
+          <label>เงินหัก</label>
+          <input id="deductMoney" type="number" value="0" step="0.01" oninput="calculateAndRender()" />
+        </div>
+
+        <div class="field">
+          <label>เงินคงเหลือ</label>
+          <input id="balanceAmount" readonly />
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn-blue" onclick="renderSlip()">อัปเดตตัวอย่าง</button>
+        <button class="btn-green" onclick="window.print()">พิมพ์</button>
+        <button class="btn-gray" onclick="resetExample()">รีเซ็ตตัวอย่าง</button>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2 class="preview-title no-print">ตัวอย่างใบชั่ง</h2>
+
+      <div class="preview-wrap">
+        <div id="slip" class="weight-slip"></div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    
+      
+
+    const $ = (id) => document.getElementById(id);
+
+    function money(value) {
+      return Number(value || 0).toLocaleString("th-TH", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+    }
+
+    function weight(value) {
+      return Number(value || 0).toLocaleString("th-TH", {
+        maximumFractionDigits: 0
+      });
+    }
+
+    function calculate() {
+      const inWeight = Number($("inWeight").value || 0);
+      const outWeight = Number($("outWeight").value || 0);
+      const deductWeight = Number($("deductWeight").value || 0);
+      const price = Number($("price").value || 0);
+      const deductMoney = Number($("deductMoney").value || 0);
+
+      const netWeight = Math.abs(outWeight - inWeight);
+      const finalWeight = Math.max(netWeight - deductWeight, 0);
+      const totalAmount = finalWeight * price;
+      const balanceAmount = Math.max(totalAmount - deductMoney, 0);
+
+      $("netWeight").value = netWeight;
+      $("finalWeight").value = finalWeight;
+      $("totalAmount").value = totalAmount.toFixed(2);
+      $("balanceAmount").value = balanceAmount.toFixed(2);
+
+      return {
+        netWeight,
+        finalWeight,
+        totalAmount,
+        balanceAmount,
+        deductWeight,
+        deductMoney
+      };
+    }
+
+    function calculateAndRender() {
+      calculate();
+      renderSlip();
+    }
+
+    function renderSlip() {
+      const summary = calculate();
+
+      $("slip").innerHTML = `
+        <div class="slip-top">
+          <div class="slip-no">เลขที่ใบชั่ง ${$("ticketNo").value || "-"}</div>
+          <div class="slip-title">ใบชั่งน้ำหนัก</div>
+          <div class="slip-date">วันที่ ${$("docDate").value || "-"}</div>
+        </div>
+
+        <div class="info-row">
+          <div class="label">ชื่อลูกค้า</div>
+          <div class="value">${$("customerName").value || "-"}</div>
+          <div class="label">พนักงานชั่ง</div>
+          <div class="value">${$("scaleStaff").value || "-"}</div>
+        </div>
+
+        <div class="info-row">
+          <div class="label">สินค้า</div>
+          <div class="value">${$("productName").value || "-"}</div>
+          <div class="label">ประเภทรถ</div>
+          <div class="value">${$("truckType").value || "-"}</div>
+        </div>
+
+        <div class="info-row three">
+          <div class="label">ราคา</div>
+          <div class="value">${money($("price").value)} บาท</div>
+          <div class="label">หมายเหตุ</div>
+          <div class="value">${$("note").value || ""}</div>
+        </div>
+
+        <table class="main-table">
+          <thead>
+            <tr>
+              <th style="width:70px;">รายการ</th>
+              <th>ทะเบียนรถ</th>
+              <th style="width:110px;">วันที่</th>
+              <th style="width:100px;">เวลา</th>
+              <th style="width:120px;">น้ำหนัก</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="center">เข้า</td>
+              <td>${$("inPlate").value || "-"}</td>
+              <td class="center">${$("inDate").value || "-"}</td>
+              <td class="center">${$("inTime").value || "-"}</td>
+              <td class="right">${weight($("inWeight").value)}</td>
+            </tr>
+            <tr>
+              <td class="center">ออก</td>
+              <td>${$("outPlate").value || "-"}</td>
+              <td class="center">${$("outDate").value || "-"}</td>
+              <td class="center">${$("outTime").value || "-"}</td>
+              <td class="right">${weight($("outWeight").value)}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="summary-area">
+          <div class="note-box">
+            <strong>หมายเหตุ</strong><br>
+            ${$("note").value || ""}
+          </div>
+
+          <table class="summary-table">
+            <tr>
+              <td>นน. สุทธิ</td>
+              <td>${weight(summary.netWeight)}</td>
+            </tr>
+            <tr>
+              <td>ความชื้น/สิ่งเจือปน</td>
+              <td>${weight(summary.deductWeight)}</td>
+            </tr>
+            <tr>
+              <td>นน. คงเหลือ</td>
+              <td>${weight(summary.finalWeight)}</td>
+            </tr>
+            <tr>
+              <td>จำนวนเงิน</td>
+              <td>${money(summary.totalAmount)}</td>
+            </tr>
+            <tr>
+              <td>เงินหัก</td>
+              <td>${money(summary.deductMoney)}</td>
+            </tr>
+            <tr>
+              <td>เงินคงเหลือ</td>
+              <td>${money(summary.balanceAmount)}</td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="signature-row">
+          <div class="signature-line">พนักงานชั่ง</div>
+          <div class="signature-line">พนักงานขับรถ</div>
+          <div class="signature-line">ผู้ตรวจสอบ</div>
+        </div>
+
+        <div class="company-footer">
+          ${companyFooter}
+        </div>
+      `;
+    }
+
+    function resetExample() {
+      $("ticketNo").value = "LTR250517-11";
+      $("docDate").value = "17/05/2568 14:39:30";
+      $("customerName").value = "สหกรณ์กองทุนสวนยางพาราทองผาภูมิ จำกัด";
+      $("scaleStaff").value = "อรรถพล เจ๊ะโซ๊ะ";
+      $("productName").value = "ยางแผ่นดิบ";
+      $("truckType").value = "เทรนเลอร์";
+      $("price").value = "0";
+      $("note").value = "";
+
+      $("inPlate").value = "70-4923/70-4924 นครศรีธรรมราช";
+      $("inDate").value = "17/05/2568";
+      $("inTime").value = "08:09:37";
+      $("inWeight").value = "15730";
+
+      $("outPlate").value = "70-4923/70-4924 นครศรีธรรมราช";
+      $("outDate").value = "17/05/2568";
+      $("outTime").value = "14:39:30";
+      $("outWeight").value = "48690";
+
+      $("deductWeight").value = "0";
+      $("deductMoney").value = "0";
+
+      calculateAndRender();
+    }
+
+    calculateAndRender();
+  </script>
+</body>
+</html>
