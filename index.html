@@ -515,185 +515,208 @@
 
   <script>
     
-      
+                      <script>
+  const companyFooter = `
+    541 ม.3 จันดี ฉวาง นครศรีธรรมราช - 80250 โทร 075-445-930 เลขประจำตัวผู้เสียภาษี 0805523000071<br>
+    บริษัท แอล.ที. การยาง จำกัด
+  `;
 
-    const $ = (id) => document.getElementById(id);
+  const $ = (id) => {
+    const element = document.getElementById(id);
+    if (!element) console.error(`ไม่พบ element id="${id}"`);
+    return element;
+  };
 
-    function money(value) {
-      return Number(value || 0).toLocaleString("th-TH", {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-      });
-    }
+  function money(value) {
+    return Number(value || 0).toLocaleString("th-TH", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+  }
 
-    function weight(value) {
-      return Number(value || 0).toLocaleString("th-TH", {
-        maximumFractionDigits: 0
-      });
-    }
+  function weight(value) {
+    return Number(value || 0).toLocaleString("th-TH", {
+      maximumFractionDigits: 0
+    });
+  }
 
-    function calculate() {
-      const inWeight = Number($("inWeight").value || 0);
-      const outWeight = Number($("outWeight").value || 0);
-      const deductWeight = Number($("deductWeight").value || 0);
-      const price = Number($("price").value || 0);
-      const deductMoney = Number($("deductMoney").value || 0);
+  function getValue(id) {
+    const el = $(id);
+    return el ? el.value : "";
+  }
 
-      const netWeight = Math.abs(outWeight - inWeight);
-      const finalWeight = Math.max(netWeight - deductWeight, 0);
-      const totalAmount = finalWeight * price;
-      const balanceAmount = Math.max(totalAmount - deductMoney, 0);
+  function setValue(id, value) {
+    const el = $(id);
+    if (el) el.value = value;
+  }
 
-      $("netWeight").value = netWeight;
-      $("finalWeight").value = finalWeight;
-      $("totalAmount").value = totalAmount.toFixed(2);
-      $("balanceAmount").value = balanceAmount.toFixed(2);
+  function calculate() {
+    const inWeight = Number(getValue("inWeight") || 0);
+    const outWeight = Number(getValue("outWeight") || 0);
+    const deductWeight = Number(getValue("deductWeight") || 0);
+    const price = Number(getValue("price") || 0);
+    const deductMoney = Number(getValue("deductMoney") || 0);
 
-      return {
-        netWeight,
-        finalWeight,
-        totalAmount,
-        balanceAmount,
-        deductWeight,
-        deductMoney
-      };
-    }
+    const netWeight = Math.abs(outWeight - inWeight);
+    const finalWeight = Math.max(netWeight - deductWeight, 0);
+    const totalAmount = finalWeight * price;
+    const balanceAmount = Math.max(totalAmount - deductMoney, 0);
 
-    function calculateAndRender() {
-      calculate();
-      renderSlip();
-    }
+    setValue("netWeight", netWeight);
+    setValue("finalWeight", finalWeight);
+    setValue("totalAmount", totalAmount.toFixed(2));
+    setValue("balanceAmount", balanceAmount.toFixed(2));
 
-    function renderSlip() {
-      const summary = calculate();
+    return {
+      netWeight,
+      finalWeight,
+      totalAmount,
+      balanceAmount,
+      deductWeight,
+      deductMoney
+    };
+  }
 
-      $("slip").innerHTML = `
-        <div class="slip-top">
-          <div class="slip-no">เลขที่ใบชั่ง ${$("ticketNo").value || "-"}</div>
-          <div class="slip-title">ใบชั่งน้ำหนัก</div>
-          <div class="slip-date">วันที่ ${$("docDate").value || "-"}</div>
+  function calculateAndRender() {
+    calculate();
+    renderSlip();
+  }
+
+  function renderSlip() {
+    const slip = $("slip");
+    if (!slip) return;
+
+    const summary = calculate();
+
+    slip.innerHTML = `
+      <div class="slip-top">
+        <div class="slip-no">เลขที่ใบชั่ง ${getValue("ticketNo") || "-"}</div>
+        <div class="slip-title">ใบชั่งน้ำหนัก</div>
+        <div class="slip-date">วันที่ ${getValue("docDate") || "-"}</div>
+      </div>
+
+      <div class="info-row">
+        <div class="label">ชื่อลูกค้า</div>
+        <div class="value">${getValue("customerName") || "-"}</div>
+        <div class="label">พนักงานชั่ง</div>
+        <div class="value">${getValue("scaleStaff") || "-"}</div>
+      </div>
+
+      <div class="info-row">
+        <div class="label">สินค้า</div>
+        <div class="value">${getValue("productName") || "-"}</div>
+        <div class="label">ประเภทรถ</div>
+        <div class="value">${getValue("truckType") || "-"}</div>
+      </div>
+
+      <div class="info-row three">
+        <div class="label">ราคา</div>
+        <div class="value">${money(getValue("price"))} บาท</div>
+        <div class="label">หมายเหตุ</div>
+        <div class="value">${getValue("note") || ""}</div>
+      </div>
+
+      <table class="main-table">
+        <thead>
+          <tr>
+            <th style="width:70px;">รายการ</th>
+            <th>ทะเบียนรถ</th>
+            <th style="width:110px;">วันที่</th>
+            <th style="width:100px;">เวลา</th>
+            <th style="width:120px;">น้ำหนัก</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="center">เข้า</td>
+            <td>${getValue("inPlate") || "-"}</td>
+            <td class="center">${getValue("inDate") || "-"}</td>
+            <td class="center">${getValue("inTime") || "-"}</td>
+            <td class="right">${weight(getValue("inWeight"))}</td>
+          </tr>
+          <tr>
+            <td class="center">ออก</td>
+            <td>${getValue("outPlate") || "-"}</td>
+            <td class="center">${getValue("outDate") || "-"}</td>
+            <td class="center">${getValue("outTime") || "-"}</td>
+            <td class="right">${weight(getValue("outWeight"))}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="summary-area">
+        <div class="note-box">
+          <strong>หมายเหตุ</strong><br>
+          ${getValue("note") || ""}
         </div>
 
-        <div class="info-row">
-          <div class="label">ชื่อลูกค้า</div>
-          <div class="value">${$("customerName").value || "-"}</div>
-          <div class="label">พนักงานชั่ง</div>
-          <div class="value">${$("scaleStaff").value || "-"}</div>
-        </div>
-
-        <div class="info-row">
-          <div class="label">สินค้า</div>
-          <div class="value">${$("productName").value || "-"}</div>
-          <div class="label">ประเภทรถ</div>
-          <div class="value">${$("truckType").value || "-"}</div>
-        </div>
-
-        <div class="info-row three">
-          <div class="label">ราคา</div>
-          <div class="value">${money($("price").value)} บาท</div>
-          <div class="label">หมายเหตุ</div>
-          <div class="value">${$("note").value || ""}</div>
-        </div>
-
-        <table class="main-table">
-          <thead>
-            <tr>
-              <th style="width:70px;">รายการ</th>
-              <th>ทะเบียนรถ</th>
-              <th style="width:110px;">วันที่</th>
-              <th style="width:100px;">เวลา</th>
-              <th style="width:120px;">น้ำหนัก</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td class="center">เข้า</td>
-              <td>${$("inPlate").value || "-"}</td>
-              <td class="center">${$("inDate").value || "-"}</td>
-              <td class="center">${$("inTime").value || "-"}</td>
-              <td class="right">${weight($("inWeight").value)}</td>
-            </tr>
-            <tr>
-              <td class="center">ออก</td>
-              <td>${$("outPlate").value || "-"}</td>
-              <td class="center">${$("outDate").value || "-"}</td>
-              <td class="center">${$("outTime").value || "-"}</td>
-              <td class="right">${weight($("outWeight").value)}</td>
-            </tr>
-          </tbody>
+        <table class="summary-table">
+          <tr>
+            <td>นน. สุทธิ</td>
+            <td>${weight(summary.netWeight)}</td>
+          </tr>
+          <tr>
+            <td>ความชื้น/สิ่งเจือปน</td>
+            <td>${weight(summary.deductWeight)}</td>
+          </tr>
+          <tr>
+            <td>นน. คงเหลือ</td>
+            <td>${weight(summary.finalWeight)}</td>
+          </tr>
+          <tr>
+            <td>จำนวนเงิน</td>
+            <td>${money(summary.totalAmount)}</td>
+          </tr>
+          <tr>
+            <td>เงินหัก</td>
+            <td>${money(summary.deductMoney)}</td>
+          </tr>
+          <tr>
+            <td>เงินคงเหลือ</td>
+            <td>${money(summary.balanceAmount)}</td>
+          </tr>
         </table>
+      </div>
 
-        <div class="summary-area">
-          <div class="note-box">
-            <strong>หมายเหตุ</strong><br>
-            ${$("note").value || ""}
-          </div>
+      <div class="signature-row">
+        <div class="signature-line">พนักงานชั่ง</div>
+        <div class="signature-line">พนักงานขับรถ</div>
+        <div class="signature-line">ผู้ตรวจสอบ</div>
+      </div>
 
-          <table class="summary-table">
-            <tr>
-              <td>นน. สุทธิ</td>
-              <td>${weight(summary.netWeight)}</td>
-            </tr>
-            <tr>
-              <td>ความชื้น/สิ่งเจือปน</td>
-              <td>${weight(summary.deductWeight)}</td>
-            </tr>
-            <tr>
-              <td>นน. คงเหลือ</td>
-              <td>${weight(summary.finalWeight)}</td>
-            </tr>
-            <tr>
-              <td>จำนวนเงิน</td>
-              <td>${money(summary.totalAmount)}</td>
-            </tr>
-            <tr>
-              <td>เงินหัก</td>
-              <td>${money(summary.deductMoney)}</td>
-            </tr>
-            <tr>
-              <td>เงินคงเหลือ</td>
-              <td>${money(summary.balanceAmount)}</td>
-            </tr>
-          </table>
-        </div>
+      <div class="company-footer">
+        ${companyFooter}
+      </div>
+    `;
+  }
 
-        <div class="signature-row">
-          <div class="signature-line">พนักงานชั่ง</div>
-          <div class="signature-line">พนักงานขับรถ</div>
-          <div class="signature-line">ผู้ตรวจสอบ</div>
-        </div>
+  function resetExample() {
+    setValue("ticketNo", "LTR250517-11");
+    setValue("docDate", "17/05/2568 14:39:30");
+    setValue("customerName", "สหกรณ์กองทุนสวนยางพาราทองผาภูมิ จำกัด");
+    setValue("scaleStaff", "อรรถพล เจ๊ะโซ๊ะ");
+    setValue("productName", "ยางแผ่นดิบ");
+    setValue("truckType", "เทรนเลอร์");
+    setValue("price", "0");
+    setValue("note", "");
 
-        
-      
-    }
+    setValue("inPlate", "70-4923/70-4924 นครศรีธรรมราช");
+    setValue("inDate", "17/05/2568");
+    setValue("inTime", "08:09:37");
+    setValue("inWeight", "15730");
 
-    function resetExample() {
-      $("ticketNo").value = "LTR250517-11";
-      $("docDate").value = "17/05/2568 14:39:30";
-      $("customerName").value = "สหกรณ์กองทุนสวนยางพาราทองผาภูมิ จำกัด";
-      $("scaleStaff").value = "อรรถพล เจ๊ะโซ๊ะ";
-      $("productName").value = "ยางแผ่นดิบ";
-      $("truckType").value = "เทรนเลอร์";
-      $("price").value = "0";
-      $("note").value = "";
+    setValue("outPlate", "70-4923/70-4924 นครศรีธรรมราช");
+    setValue("outDate", "17/05/2568");
+    setValue("outTime", "14:39:30");
+    setValue("outWeight", "48690");
 
-      $("inPlate").value = "70-4923/70-4924 นครศรีธรรมราช";
-      $("inDate").value = "17/05/2568";
-      $("inTime").value = "08:09:37";
-      $("inWeight").value = "15730";
-
-      $("outPlate").value = "70-4923/70-4924 นครศรีธรรมราช";
-      $("outDate").value = "17/05/2568";
-      $("outTime").value = "14:39:30";
-      $("outWeight").value = "48690";
-
-      $("deductWeight").value = "0";
-      $("deductMoney").value = "0";
-
-      calculateAndRender();
-    }
+    setValue("deductWeight", "0");
+    setValue("deductMoney", "0");
 
     calculateAndRender();
-  </script>
-</body>
-</html>
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    calculateAndRender();
+  });
+</script>
