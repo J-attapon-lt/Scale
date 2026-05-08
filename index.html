@@ -381,7 +381,7 @@
         <div class="section-title">ข้อมูลหลัก</div>
 
         <div class="field">
-          <label>เลขที่ใบชั่ง</label>
+          <label>เลขที่ใบชั่ง </label>
           <input id="ticketNo" value="LTR250517-11" oninput="renderSlip()" />
         </div>
 
@@ -611,75 +611,129 @@
         <div class="label">หมายเหตุ</div>
         <div class="value">${getValue("note") || ""}</div>
       </div>
+<div style="
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto;
+  font-family: 'Sarabun', Arial, sans-serif;
+  color: #000;
+">
 
-      <table class="main-table">
-        <thead>
-          <tr>
-            <th style="width:70px;">รายการ</th>
-            <th>ทะเบียนรถ</th>
-            <th style="width:110px;">วันที่</th>
-            <th style="width:100px;">เวลา</th>
-            <th style="width:120px;">น้ำหนัก</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="center">เข้า</td>
-            <td>${getValue("inPlate") || "-"}</td>
-            <td class="center">${getValue("inDate") || "-"}</td>
-            <td class="center">${getValue("inTime") || "-"}</td>
-            <td class="right">${weight(getValue("inWeight"))}</td>
-          </tr>
-          <tr>
-            <td class="center">ออก</td>
-            <td>${getValue("outPlate") || "-"}</td>
-            <td class="center">${getValue("outDate") || "-"}</td>
-            <td class="center">${getValue("outTime") || "-"}</td>
-            <td class="right">${weight(getValue("outWeight"))}</td>
-          </tr>
-        </tbody>
-      </table>
+  <table style="
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    font-size: 15px;
+    height: 30px;
+  ">
+    <thead>
+      <tr>
+        <th style="border:1px solid #000; padding:6px; width:15%; text-align:center;">รายการ</th>
+        <th style="border:1px solid #000; padding:6px; width:35%; text-align:center;">ทะเบียนรถ</th>
+        <th style="border:1px solid #000; padding:6px; width:15%; text-align:center;">วันที่</th>
+        <th style="border:1px solid #000; padding:6px; width:15%; text-align:center;">เวลา</th>
+        <th style="border:1px solid #000; padding:6px; width:15%; text-align:center;">น้ำหนัก</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr>
+        <td style="border:1px solid #000; padding:6px; height:42px; text-align:center;">
+          เข้า
+        </td>
+        <td style="border:1px solid #000; padding:6px;">
+          ${getValue("inPlate") || "-"}
+        </td>
+        <td style="border:1px solid #000; padding:6px; text-align:center;">
+          ${getValue("inDate") || "-"}
+        </td>
+        <td style="border:1px solid #000; padding:6px; text-align:center;">
+          ${getValue("inTime") || "-"}
+        </td>
+        <td style="border:1px solid #000; padding:6px; text-align:right;">
+          ${weight(getValue("inWeight"))}
+        </td>
+      </tr>
+
+      <tr>
+        <td style="border:1px solid #000; padding:6px; height:42px; text-align:center;">
+          ออก
+        </td>
+        <td style="border:1px solid #000; padding:6px;">
+          ${getValue("outPlate") || "-"}
+        </td>
+        <td style="border:1px solid #000; padding:6px; text-align:center;">
+          ${getValue("outDate") || "-"}
+        </td>
+        <td style="border:1px solid #000; padding:6px; text-align:center;">
+          ${getValue("outTime") || "-"}
+        </td>
+        <td style="border:1px solid #000; padding:6px; text-align:right;">
+          ${weight(getValue("outWeight"))}
+        </td>
+      </tr>
+
+      <tr>
+        <!-- ช่องลายเซ็นซ้าย กินพื้นที่ 3 คอลัมน์ -->
+        <td colspan="3" style="
+          height:135px;
+          vertical-align:bottom;
+          border:none;
+          padding:0px 0px 0px 0px;
+        ">
+          <div style="display:flex; justify-content:space-between; gap:24px;">
+            <div style="width:48%; text-align:center;">
+              <div style="border-top:1px solid #000; padding-top:6px;">
+                พนักงานชั่ง
+              </div>
+            </div>
+
+            <div style="width:48%; text-align:center;">
+              <div style="border-top:1px solid #000; padding-top:6px;">
+                พนักงานขับรถ
+              </div>
+            </div>
+          </div>
+        </td>
         
-      <div class="summary-area">
+        <td colspan="2" style="
+          height:130px;
+          vertical-align:top;
+          border-collapse: collapse;
+          padding:0;
+        ">
+          <table style="
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    font-size: 16px;
+  ">
+    <thead>
 
+            <tr>
+              <td style="border:1px solid #000; padding:6px; height:42px; text-align:right;">
+               <b> นน. สุทธิ</b>
+              </td>
+              <td style="border:1px solid #000; padding:6px; text-align:right;">
+                ${weight(summary.netWeight)}
+              </td>
+            </tr>
+            <tr>
+              <td style="border:1px solid #000; padding:6px; height:42px; text-align:right;">
+               <b> นน. คงเหลือ  </b>
+              </td>
+              <td style="border:1px solid #000; padding:6px; height:42px; text-align:right;">
+                ${weight(summary.finalWeight)}
+              </td>
+            </tr>
 
-        <table class="summary-table">
-          <tr>
-            <td>นน. สุทธิ</td>
-            <td>${weight(summary.netWeight)}</td>
-          </tr>
-          <tr>
-            <td>ความชื้น/สิ่งเจือปน</td>
-            <td>${weight(summary.deductWeight)}</td>
-          </tr>
-          <tr>
-            <td>นน. คงเหลือ</td>
-            <td>${weight(summary.finalWeight)}</td>
-          </tr>
-          <tr>
-            <td>จำนวนเงิน</td>
-            <td>${money(summary.totalAmount)}</td>
-          </tr>
-          <tr>
-            <td>เงินหัก</td>
-            <td>${money(summary.deductMoney)}</td>
-          </tr>
-          <tr>
-            <td>เงินคงเหลือ</td>
-            <td>${money(summary.balanceAmount)}</td>
-          </tr>
-        </table>
-      </div>
+          </table>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 
-      <div class="signature-row">
-        <div class="signature-line">พนักงานชั่ง</div>
-        <div class="signature-line">พนักงานขับรถ</div>
-        <div class="signature-line">ผู้ตรวจสอบ</div>
-      </div>
-
-      <div class="company-footer">
-        ${companyFooter}
-      </div>
+</div> 
     `;
   }
 
