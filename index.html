@@ -196,7 +196,7 @@
       justify-content: space-between;
       align-items: center;
       gap: 12px;
-      font-size: 13.5px;
+      font-size: 13px;
     }
 
     .slip-no {
@@ -391,8 +391,8 @@
 
     @media print {
       @page {
-        size: A4 landscape;
-        margin: 8mm;
+       size: 210mm 130mm !important;
+        margin: 0 !important;
       }
 
       body {
@@ -428,7 +428,7 @@
 
       .weight-slip {
         width: 210mm !important;
-        min-height: 148mm !important;
+        min-height: 130mm !important;
         border: 0 !important;
         margin: 0 auto !important;
         padding: 8mm 10mm 7mm !important;
